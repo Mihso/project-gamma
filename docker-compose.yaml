@@ -1,0 +1,45 @@
+version: "3.7"
+volumes:
+  ghi:
+    external: true
+  tester:
+    external: true
+services:
+  database:
+    build:
+      context: ./relational-data
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - tester:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=tester
+      - POSTGRES_PASSWORD=test-databases
+
+    ports:
+      - 15432:5432
+
+  project-gamma:
+    build:
+        context: ./project-gamma
+        dockerfile: ./Dockerfile.dev
+    ports:
+        - "8000:8000"
+    depends_on:
+      - database
+    volumes:
+        - ./project-gamma:/app
+    environment:
+        DATABASE_URL: postgresql://user-name:password@postgres/tester
+        WAIT_HOSTS: database:5432
+  ghi:
+    image: node:lts-bullseye
+    command: /bin/bash run.sh
+    working_dir: /app
+    volumes:
+        - ./ghi:/app
+    ports:
+        - "3000:3000"
+    environment:
+        HOST_OS: ${OS}
+        NODE_ENV: development
+        HOST: "0.0.0.0"
