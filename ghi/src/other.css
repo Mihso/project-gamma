@@ -1,0 +1,13 @@
+.other {
+    text-align: center;
+  }
+
+.button {
+    font-size: calc(10px + 2vmin);
+    color:chocolate;
+    background-color:black;
+    border-style: ridge;
+    border-radius: 20%;
+    border-color: aqua;
+    padding: 1%;
+}
